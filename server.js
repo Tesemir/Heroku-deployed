@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -6,18 +5,15 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 require('dotenv').config();
 
-// Initialize the app
 const app = express();
 app.use(bodyParser.json());
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
-// Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/books')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
-// Define the Book Schema
 const bookSchema = new mongoose.Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
@@ -25,12 +21,9 @@ const bookSchema = new mongoose.Schema({
   genre: { type: String, required: true },
 });
 
-// Create the Book model
 const Book = mongoose.model('Book', bookSchema);
 
-// Routes for the API
-
-// GET /books: Fetch all books
+// GET /books
 app.get('/books', async (req, res) => {
   try {
     const books = await Book.find();
@@ -71,7 +64,7 @@ app.get('/news', async (req, res) => {
   }
 });
 
-// POST /books: Add a new book
+// POST /books
 app.post('/books', async (req, res) => {
   const { title, author, year, genre } = req.body;
 
@@ -95,7 +88,7 @@ app.post('/books', async (req, res) => {
   }
 });
 
-// PUT /books/:id: Update a book’s details
+// PUT /books/:id
 app.put('/books/:id', async (req, res) => {
   const { id } = req.params;
   const { title, author, year, genre } = req.body;
@@ -115,7 +108,7 @@ app.put('/books/:id', async (req, res) => {
   }
 });
 
-// DELETE /books/:id: Delete a book
+// DELETE /books/:id
 app.delete('/books/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -128,7 +121,7 @@ app.delete('/books/:id', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
-});x  
+});
 
 const options = {
   definition: {
@@ -144,7 +137,6 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
-// Serve Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 /**
@@ -311,7 +303,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
  *         description: Server error
  */
 
-// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
