@@ -9,8 +9,9 @@ const app = express();
 app.use(bodyParser.json());
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
+const mongoURI = 'mongodb://localhost:27017/books';
 
-mongoose.connect('mongodb://localhost:27017/books')
+mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
