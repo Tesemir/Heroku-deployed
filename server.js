@@ -56,7 +56,7 @@ app.get('/news', async (req, res) => {
           }));
 
           // Pretty-print JSON with 2 spaces for indentation
-          res.json(JSON.stringify({ totalResults: data.totalResults, articles }, null, 2));
+          res.json({ totalResults: data.totalResults, articles });
       } else {
           res.status(500).json({ error: "Error fetching news. Try again later." });
       }
