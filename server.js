@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
-const mongoURI = 'mongodb://localhost:27017/books';
+const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB connected'))
