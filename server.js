@@ -8,6 +8,8 @@ require('dotenv').config();
 const app = express();
 app.use(bodyParser.json());
 
+app.use(express.static('public'));
+
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const mongoURI = 'mongodb://localhost:27017/books';
 
@@ -34,15 +36,13 @@ app.get('/books', async (req, res) => {
   }
 });
 
-// News API Endpoint - Fetch news based on query parameters
+// News API Endpoint
 app.get('/news', async (req, res) => {
   try {
       const { query, category, country } = req.query;
 
-      // Construct API URL with user parameters
       const apiUrl = `https://newsapi.org/v2/top-headlines?${query ? `q=${query}&` : ''}${category ? `category=${category}&` : ''}${country ? `country=${country}&` : ''}apiKey=${NEWS_API_KEY}`;
 
-      // Use fetch to get data from NewsAPI
       const response = await fetch(apiUrl);
       const data = await response.json();
       
@@ -55,7 +55,6 @@ app.get('/news', async (req, res) => {
               publishedAt: article.publishedAt
           }));
 
-          // Pretty-print JSON with 2 spaces for indentation
           res.json({ totalResults: data.totalResults, articles });
       } else {
           res.status(500).json({ error: "Error fetching news. Try again later." });
@@ -128,17 +127,23 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'News and Book API Documentation',
+      title: 'News and Book API',
       version: '1.0.0',
-      description: 'API to manage books and fetch news articles based on query, category, and country.',
+      description: 'API to manage books and fetch news articles.',
     },
+    servers: [
+      {
+        url: 'http://localhost:5000',
+        description: 'Development server',
+      },
+    ],
   },
-  apis: ['./server.js'],
+  apis: ['./server.js']
 };
 
 const specs = swaggerJsdoc(options);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+
 
 /**
  * @swagger
